@@ -5,30 +5,35 @@ declare(strict_types=1);
 namespace Twin\Messenger;
 
 use Twin\Messenger\Client\Client;
+use Twin\Messenger\Client\Credentials;
 use Twin\Messenger\Client\TelegramClient;
 use Twin\Messenger\Client\ViberClient;
 use Twin\Messenger\Client\VKontakteClient;
+use Twin\Messenger\Client\WhatsappClient;
 use Twin\Messenger\Message\AudioMessage;
 use Twin\Messenger\Message\FileMessage;
 use Twin\Messenger\Message\ImageMessage;
 use Twin\Messenger\Message\Message;
 use Twin\Messenger\Message\TextMessage;
 use Twin\Messenger\Message\VideoMessage;
+use UnexpectedValueException;
 
 abstract class Messenger
 {
+    protected MessengerConfig $config;
     protected Client $client;
 
-    public static function from(MessengerType $type): static
+    public static function from(MessengerType $type, MessengerConfig $config, Credentials $credentials): static
     {
-        match ($type) {
-            MessengerType::VIBER => new static(new ViberClient()),
-            MessengerType::TELEGRAM => new static(new TelegramClient()),
-            MessengerType::VKONTAKTE => new static(new VKontakteClient()),
+        return match ($type) {
+            MessengerType::VIBER => new static($config, new ViberClient($credentials)),
+            MessengerType::TELEGRAM => new static($config, new TelegramClient($credentials)),
+            MessengerType::VKONTAKTE => new static($config, new VKontakteClient($credentials)),
+            MessengerType::WHATSAPP => new static($config, new WhatsappClient($credentials)),
         };
     }
 
-    public function __construct(Client $client)
+    public function __construct(MessengerConfig $config, Client $client)
     {
         $this->client = $client;
     }
@@ -52,7 +57,16 @@ abstract class Messenger
         if ($message instanceof FileMessage) {
             return $this->sendFileMessage($userId, $message);
         }
-        throw new \UnexpectedValueException('Unsupported message of type ' . $message::class);
+        throw new UnexpectedValueException('Unsupported message of type ' . $message::class);
+    }
+
+    final public function setWebhook(): void
+    {
+        if (!$this->config->webhookUrl) {
+            return;
+        }
+
+        $this->client->setWebhook($this->config->webhookUrl);
     }
 
     abstract protected function sendTextMessage(string $userId, TextMessage $message);

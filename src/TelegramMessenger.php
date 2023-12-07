@@ -15,9 +15,9 @@ use Twin\Messenger\Message\VideoMessage;
 
 class TelegramMessenger extends Messenger
 {
-    public function __construct(TelegramClient $client)
+    public function __construct(MessengerConfig $config, TelegramClient $client)
     {
-        parent::__construct($client);
+        parent::__construct($config, $client);
     }
 
     public function parseIncomingMessage(array $input)

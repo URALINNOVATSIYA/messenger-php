@@ -17,9 +17,9 @@ use Twin\Messenger\Message\VideoMessage;
 
 class VKontakteMessenger extends Messenger
 {
-    public function __construct(VKontakteClient $client)
+    public function __construct(MessengerConfig $config, VKontakteClient $client)
     {
-        parent::__construct($client);
+        parent::__construct($config, $client);
     }
 
     public function parseIncomingMessage(array $input)

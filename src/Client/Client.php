@@ -7,4 +7,6 @@ namespace Twin\Messenger\Client;
 interface Client
 {
     public function sendMessage(array $params): Response;
+
+    public function setWebhook(string $webhookUrl): Response;
 }

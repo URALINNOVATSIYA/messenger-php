@@ -7,8 +7,8 @@ namespace Twin\Messenger;
 use Twin\Messenger\Client\ViberClient;
 use Twin\Messenger\Message\AudioMessage;
 use Twin\Messenger\Message\Entity\ActionType;
-use Twin\Messenger\Message\Entity\Keyboard;
 use Twin\Messenger\Message\Entity\Button;
+use Twin\Messenger\Message\Entity\Keyboard;
 use Twin\Messenger\Message\Entity\Sender;
 use Twin\Messenger\Message\FileMessage;
 use Twin\Messenger\Message\ImageMessage;
@@ -18,9 +18,9 @@ use Twin\Messenger\Message\VideoMessage;
 
 class ViberMessenger extends Messenger
 {
-    public function __construct(ViberClient $client)
+    public function __construct(MessengerConfig $config, ViberClient $client)
     {
-        parent::__construct($client);
+        parent::__construct($config, $client);
     }
 
     public function parseIncomingMessage(array $input)

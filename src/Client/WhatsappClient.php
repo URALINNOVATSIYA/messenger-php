@@ -1,41 +1,41 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Twin\Messenger\Client;
 
 use Exception;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
 
-class ViberClient extends HttpClient
+class WhatsappClient extends HttpClient
 {
-    private string $accessToken;
+    private string $accountId;
+    private string $authToken;
 
     public function __construct(Credentials $credentials)
     {
-        if (!$credentials->secretToken) {
-            throw new Exception('Auth token is required for Viber integration');
+        if (!$credentials->secretToken || !$credentials->accountId) {
+            throw new Exception('Auth token is required for Whatsapp integration');
         }
-        $this->accessToken = $credentials->secretToken;
-        parent::__construct(new GuzzleClient(), 'https://chatapi.viber.com/pa');
+        $this->accountId = $credentials->accountId;
+        $this->authToken = $credentials->secretToken;
+        parent::__construct(new GuzzleClient(), "https://api-whatsapp.io/api");
     }
 
     public function sendMessage(array $params): Response
     {
-        return $this->apiRequest('POST', '/send_message', $params);
+        return $this->apiRequest('POST', '/sendMessage', $params);
     }
 
     protected function apiRequest(string $method, string $url, array $params = []): Response
     {
+        $queryParams = http_build_query([
+            'token' => $this->authToken,
+        ]);
         try {
             $apiResponse = $this->request(
                 $method,
-                $this->baseUrl.$url,
+                $this->baseUrl.'/'.$this->accountId.$url.'?'.$queryParams,
                 $params,
-                [
-                    'X-Viber-Auth-Token' => $this->accessToken
-                ]
             );
 
             $response = new Response(
@@ -54,8 +54,8 @@ class ViberClient extends HttpClient
 
     public function setWebhook(string $webhookUrl): Response
     {
-        return $this->apiRequest('POST', '/set_webhook', [
-            'url' => $webhookUrl
-        ]);
+        return new Response(
+            exception: new Exception('Whatsapp doesn\'t support webhooks')
+        );
     }
 }
