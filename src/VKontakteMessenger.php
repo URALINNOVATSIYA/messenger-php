@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Twin\Messenger;
 
+use Exception;
+use Twin\Messenger\Auth\Credentials;
 use Twin\Messenger\Client\VKontakteClient;
 use Twin\Messenger\Message\AudioMessage;
 use Twin\Messenger\Message\Entity\ActionType;
@@ -17,14 +19,22 @@ use Twin\Messenger\Message\VideoMessage;
 
 class VKontakteMessenger extends Messenger
 {
-    public function __construct(MessengerConfig $config, VKontakteClient $client)
+    public function __construct(VKontakteClient $client)
     {
-        parent::__construct($config, $client);
+        parent::__construct($client);
     }
 
     public function parseIncomingMessage(array $input)
     {
 
+    }
+
+    public function authenticate(Credentials $credentials): void
+    {
+        if (!$credentials->secretToken) {
+            throw new Exception('Auth token is required for Vkontakte integration');
+        }
+        $this->client->auth($credentials);
     }
 
     protected function sendTextMessage(string $userId, TextMessage $message)

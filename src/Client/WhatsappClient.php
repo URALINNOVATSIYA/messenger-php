@@ -2,23 +2,24 @@
 
 namespace Twin\Messenger\Client;
 
-use Exception;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
+use Twin\Messenger\Auth\Credentials;
 
 class WhatsappClient extends HttpClient
 {
-    private string $accountId;
-    private string $authToken;
+    private ?string $accountId = null;
+    private ?string $authToken = null;
 
-    public function __construct(Credentials $credentials)
+    public function __construct()
     {
-        if (!$credentials->secretToken || !$credentials->accountId) {
-            throw new Exception('Auth token is required for Whatsapp integration');
-        }
+        parent::__construct(new GuzzleClient(), "https://api-whatsapp.io/api");
+    }
+
+    public function auth(Credentials $credentials): void
+    {
         $this->accountId = $credentials->accountId;
         $this->authToken = $credentials->secretToken;
-        parent::__construct(new GuzzleClient(), "https://api-whatsapp.io/api");
     }
 
     public function sendMessage(array $params): Response
@@ -41,7 +42,7 @@ class WhatsappClient extends HttpClient
             $response = new Response(
                 statusCode: $apiResponse->getStatusCode(),
                 headers: $apiResponse->getHeaders(),
-                body: json_decode($apiResponse->getBody()->getContents(), true),
+                body: $this->parseResponse($apiResponse),
             );
         } catch (GuzzleException $e) {
             $response = new Response(
@@ -50,12 +51,5 @@ class WhatsappClient extends HttpClient
         }
 
         return $response;
-    }
-
-    public function setWebhook(string $webhookUrl): Response
-    {
-        return new Response(
-            exception: new Exception('Whatsapp doesn\'t support webhooks')
-        );
     }
 }

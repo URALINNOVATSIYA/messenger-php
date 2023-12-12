@@ -1,6 +1,6 @@
 <?php
 
-namespace Twin\Messenger\Client;
+namespace Twin\Messenger\Auth;
 
 readonly class Credentials
 {

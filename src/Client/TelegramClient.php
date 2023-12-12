@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace Twin\Messenger\Client;
 
-use Exception;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
+use Twin\Messenger\Auth\Credentials;
 
 class TelegramClient extends HttpClient
 {
-    private string $botToken;
+    private ?string $botToken = null;
 
-    public function __construct(Credentials $credentials)
+    public function __construct()
     {
-        if (!$credentials->secretToken) {
-            throw new Exception('Bot token is required for Telegram  integration');
-        }
-        $this->botToken = $credentials->secretToken;
         parent::__construct(new GuzzleClient(), 'https://api.telegram.org/bot');
+    }
+
+    public function auth(Credentials $credentials): void
+    {
+        $this->botToken = $credentials->secretToken;
     }
 
     private function getApiUrl(): string
@@ -43,7 +44,7 @@ class TelegramClient extends HttpClient
             $response = new Response(
                 statusCode: $apiResponse->getStatusCode(),
                 headers: $apiResponse->getHeaders(),
-                body: json_decode($apiResponse->getBody()->getContents(), true),
+                body: $this->parseResponse($apiResponse),
             );
         } catch (GuzzleException $e) {
             $response = new Response(
@@ -52,12 +53,5 @@ class TelegramClient extends HttpClient
         }
 
         return $response;
-    }
-
-    public function setWebhook(string $webhookUrl): Response
-    {
-        return $this->apiRequest('POST', '/setWebhook', [
-            'url' => $webhookUrl
-        ]);
     }
 }

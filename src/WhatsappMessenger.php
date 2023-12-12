@@ -2,6 +2,8 @@
 
 namespace Twin\Messenger;
 
+use Exception;
+use Twin\Messenger\Auth\Credentials;
 use Twin\Messenger\Client\Client;
 use Twin\Messenger\Message\AudioMessage;
 use Twin\Messenger\Message\FileMessage;
@@ -11,14 +13,22 @@ use Twin\Messenger\Message\VideoMessage;
 
 class WhatsappMessenger extends Messenger
 {
-    public function __construct(MessengerConfig $config, Client $client)
+    public function __construct(Client $client)
     {
-        parent::__construct($config, $client);
+        parent::__construct($client);
     }
 
     public function parseIncomingMessage(array $input)
     {
         // TODO: Implement parseIncomingMessage() method.
+    }
+
+    public function authenticate(Credentials $credentials): void
+    {
+        if (!$credentials->secretToken || !$credentials->accountId) {
+            throw new Exception('Auth token and account ID are required for Whatsapp integration');
+        }
+        $this->client->auth($credentials);
     }
 
     protected function sendTextMessage(string $userId, TextMessage $message)

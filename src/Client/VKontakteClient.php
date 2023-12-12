@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace Twin\Messenger\Client;
 
-use Exception;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
+use Twin\Messenger\Auth\Credentials;
 
 class VKontakteClient extends HttpClient
 {
-    protected ?string $accessToken;
+    protected ?string $accessToken = null;
 
-    public function __construct(Credentials $credentials)
+    public function __construct()
     {
-        if (!$credentials->secretToken) {
-            throw new Exception('Auth token is required for Vkontakte integration');
-        }
-        $this->accessToken = $credentials->secretToken;
         parent::__construct(new GuzzleClient(), 'https://api.vk.com/method');
+    }
+
+    public function auth(Credentials $credentials): void
+    {
+        $this->accessToken = $credentials->secretToken;
     }
 
     public function sendMessage(array $params): Response
@@ -41,7 +42,7 @@ class VKontakteClient extends HttpClient
             $response = new Response(
                 statusCode: $apiResponse->getStatusCode(),
                 headers: $apiResponse->getHeaders(),
-                body: json_decode($apiResponse->getBody()->getContents(), true),
+                body: $this->parseResponse($apiResponse),
             );
         } catch (GuzzleException $e) {
             $response = new Response(
@@ -50,12 +51,5 @@ class VKontakteClient extends HttpClient
         }
 
         return $response;
-    }
-
-    public function setWebhook(string $webhookUrl): Response
-    {
-        return new Response(
-            exception: new Exception('Vkontakte doesn\'t support webhooks')
-        );
     }
 }

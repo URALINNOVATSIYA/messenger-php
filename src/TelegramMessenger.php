@@ -2,6 +2,8 @@
 
 namespace Twin\Messenger;
 
+use Exception;
+use Twin\Messenger\Auth\Credentials;
 use Twin\Messenger\Client\TelegramClient;
 use Twin\Messenger\Message\AudioMessage;
 use Twin\Messenger\Message\Entity\ActionType;
@@ -15,14 +17,22 @@ use Twin\Messenger\Message\VideoMessage;
 
 class TelegramMessenger extends Messenger
 {
-    public function __construct(MessengerConfig $config, TelegramClient $client)
+    public function __construct(TelegramClient $client)
     {
-        parent::__construct($config, $client);
+        parent::__construct($client);
     }
 
     public function parseIncomingMessage(array $input)
     {
         // TODO: Implement parseIncomingMessage() method.
+    }
+
+    public function authenticate(Credentials $credentials): void
+    {
+        if (!$credentials->secretToken) {
+            throw new Exception('Bot token is required for Telegram integration');
+        }
+        $this->client->auth($credentials);
     }
 
     protected function sendTextMessage(string $userId, TextMessage $message)

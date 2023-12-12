@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Twin\Messenger;
 
+use Exception;
+use Twin\Messenger\Auth\Credentials;
 use Twin\Messenger\Client\ViberClient;
 use Twin\Messenger\Message\AudioMessage;
 use Twin\Messenger\Message\Entity\ActionType;
@@ -18,9 +20,9 @@ use Twin\Messenger\Message\VideoMessage;
 
 class ViberMessenger extends Messenger
 {
-    public function __construct(MessengerConfig $config, ViberClient $client)
+    public function __construct(ViberClient $client)
     {
-        parent::__construct($config, $client);
+        parent::__construct($client);
     }
 
     public function parseIncomingMessage(array $input)
@@ -42,6 +44,15 @@ class ViberMessenger extends Messenger
         }
         return $response;
     }
+
+    public function authenticate(Credentials $credentials): void
+    {
+        if (!$credentials->secretToken) {
+            throw new Exception('Auth token is required for Viber integration');
+        }
+        $this->client->auth($credentials);
+    }
+
 
     protected function sendImageMessage(string $userId, ImageMessage $message)
     {
