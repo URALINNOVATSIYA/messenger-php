@@ -6,17 +6,17 @@ namespace Twin\Messenger;
 
 use RuntimeException;
 use Twin\Messenger\Auth\Credentials;
+use Twin\Messenger\BotMessage\AudioMessage;
 use Twin\Messenger\BotMessage\BotMessage;
+use Twin\Messenger\BotMessage\Entity\ActionType;
+use Twin\Messenger\BotMessage\Entity\Button;
+use Twin\Messenger\BotMessage\Entity\Keyboard;
+use Twin\Messenger\BotMessage\FileMessage;
+use Twin\Messenger\BotMessage\ImageMessage;
+use Twin\Messenger\BotMessage\TextMessage;
+use Twin\Messenger\BotMessage\VideoMessage;
 use Twin\Messenger\Client\VKontakteClient;
-use Twin\Messenger\UserMessage\AudioMessage;
-use Twin\Messenger\UserMessage\Entity\ActionType;
-use Twin\Messenger\UserMessage\Entity\Button;
-use Twin\Messenger\UserMessage\Entity\Keyboard;
-use Twin\Messenger\UserMessage\FileMessage;
-use Twin\Messenger\UserMessage\ImageMessage;
-use Twin\Messenger\UserMessage\TextMessage;
 use Twin\Messenger\UserMessage\UserMessage;
-use Twin\Messenger\UserMessage\VideoMessage;
 
 class VKontakteMessenger extends Messenger
 {
@@ -33,7 +33,7 @@ class VKontakteMessenger extends Messenger
         parent::authenticate($credentials);
     }
 
-    public function receiveMessage(array $input): BotMessage
+    public function receiveMessage(array $input): UserMessage
     {
         // TODO: Implement receiveMessage() method.
     }
@@ -109,7 +109,7 @@ class VKontakteMessenger extends Messenger
         return str_starts_with($contentType, 'video');
     }
 
-    private function addGeneralParameters(array &$params, UserMessage $message): void
+    private function addGeneralParameters(array &$params, BotMessage $message): void
     {
         $params['read_state'] = true;
         $params['random_id'] = random_int(1000000000, 9999999999);

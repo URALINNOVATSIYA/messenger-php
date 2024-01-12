@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Twin\Messenger\UserMessage\Entity;
+namespace Twin\Messenger\BotMessage\Entity;
 
 class Sender
 {

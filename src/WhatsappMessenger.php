@@ -4,13 +4,13 @@ namespace Twin\Messenger;
 
 use RuntimeException;
 use Twin\Messenger\Auth\Credentials;
-use Twin\Messenger\BotMessage\BotMessage;
+use Twin\Messenger\BotMessage\AudioMessage;
+use Twin\Messenger\BotMessage\FileMessage;
+use Twin\Messenger\BotMessage\ImageMessage;
+use Twin\Messenger\BotMessage\TextMessage;
+use Twin\Messenger\BotMessage\VideoMessage;
 use Twin\Messenger\Client\Client;
-use Twin\Messenger\UserMessage\AudioMessage;
-use Twin\Messenger\UserMessage\FileMessage;
-use Twin\Messenger\UserMessage\ImageMessage;
-use Twin\Messenger\UserMessage\TextMessage;
-use Twin\Messenger\UserMessage\VideoMessage;
+use Twin\Messenger\UserMessage\UserMessage;
 
 class WhatsappMessenger extends Messenger
 {
@@ -27,7 +27,7 @@ class WhatsappMessenger extends Messenger
         parent::authenticate($credentials);
     }
 
-    public function receiveMessage(array $input): BotMessage
+    public function receiveMessage(array $input): UserMessage
     {
         // TODO: Implement receiveMessage() method.
     }
