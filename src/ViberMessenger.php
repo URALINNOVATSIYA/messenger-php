@@ -50,7 +50,7 @@ class ViberMessenger extends Messenger
         if (!$credentials->secretToken) {
             throw new Exception('Auth token is required for Viber integration');
         }
-        $this->client->auth($credentials);
+        parent::authenticate($credentials);
     }
 
 

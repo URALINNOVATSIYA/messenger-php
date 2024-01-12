@@ -32,7 +32,7 @@ class ViberClient extends HttpClient
         try {
             $apiResponse = $this->request(
                 $method,
-                $this->baseUrl.$url,
+                $this->baseUrl . $url,
                 $params,
                 [
                     'X-Viber-Auth-Token' => $this->accessToken

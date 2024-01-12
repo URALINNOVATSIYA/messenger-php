@@ -24,7 +24,7 @@ class TelegramClient extends HttpClient
 
     private function getApiUrl(): string
     {
-        return $this->baseUrl.$this->botToken;
+        return $this->baseUrl . $this->botToken;
     }
 
     public function sendMessage(array $params): Response
@@ -37,7 +37,7 @@ class TelegramClient extends HttpClient
         try {
             $apiResponse = $this->request(
                 $method,
-                $this->getApiUrl().$url,
+                $this->getApiUrl() . $url,
                 $params
             );
 

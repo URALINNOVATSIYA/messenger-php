@@ -2,7 +2,7 @@
 
 namespace Twin\Messenger;
 
-use Exception;
+use RuntimeException;
 use Twin\Messenger\Auth\Credentials;
 use Twin\Messenger\Client\TelegramClient;
 use Twin\Messenger\Message\AudioMessage;
@@ -30,9 +30,9 @@ class TelegramMessenger extends Messenger
     public function authenticate(Credentials $credentials): void
     {
         if (!$credentials->secretToken) {
-            throw new Exception('Bot token is required for Telegram integration');
+            throw new RuntimeException('Bot token is required for Telegram integration');
         }
-        $this->client->auth($credentials);
+        parent::authenticate($credentials);
     }
 
     protected function sendTextMessage(string $userId, TextMessage $message)

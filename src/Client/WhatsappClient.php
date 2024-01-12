@@ -35,7 +35,7 @@ class WhatsappClient extends HttpClient
         try {
             $apiResponse = $this->request(
                 $method,
-                $this->baseUrl.'/'.$this->accountId.$url.'?'.$queryParams,
+                $this->baseUrl . '/' . $this->accountId . $url . '?' . $queryParams,
                 $params,
             );
 

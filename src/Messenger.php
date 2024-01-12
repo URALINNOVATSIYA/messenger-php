@@ -39,7 +39,10 @@ abstract class Messenger
 
     abstract public function parseIncomingMessage(array $input);
 
-    abstract public function authenticate(Credentials $credentials): void;
+    public function authenticate(Credentials $credentials): void
+    {
+        $this->client->auth($credentials);
+    }
 
     final public function sendMessage(string $userId, Message $message)
     {

@@ -32,7 +32,7 @@ class VKontakteClient extends HttpClient
         try {
             $apiResponse = $this->request(
                 $method,
-                $this->baseUrl.$url,
+                $this->baseUrl . $url,
                 $params,
                 [
                     'access_token' => $this->accessToken

@@ -28,7 +28,7 @@ class WhatsappMessenger extends Messenger
         if (!$credentials->secretToken || !$credentials->accountId) {
             throw new Exception('Auth token and account ID are required for Whatsapp integration');
         }
-        $this->client->auth($credentials);
+        parent::authenticate($credentials);
     }
 
     protected function sendTextMessage(string $userId, TextMessage $message)

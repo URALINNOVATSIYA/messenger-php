@@ -34,7 +34,7 @@ class VKontakteMessenger extends Messenger
         if (!$credentials->secretToken) {
             throw new Exception('Auth token is required for Vkontakte integration');
         }
-        $this->client->auth($credentials);
+        parent::authenticate($credentials);
     }
 
     protected function sendTextMessage(string $userId, TextMessage $message)
