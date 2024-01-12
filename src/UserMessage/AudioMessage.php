@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Twin\Messenger\Message;
+namespace Twin\Messenger\UserMessage;
 
 class AudioMessage extends FileMessage
 {

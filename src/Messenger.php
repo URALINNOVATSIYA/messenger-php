@@ -5,17 +5,18 @@ declare(strict_types=1);
 namespace Twin\Messenger;
 
 use Twin\Messenger\Auth\Credentials;
+use Twin\Messenger\BotMessage\BotMessage;
 use Twin\Messenger\Client\Client;
 use Twin\Messenger\Client\TelegramClient;
 use Twin\Messenger\Client\ViberClient;
 use Twin\Messenger\Client\VKontakteClient;
 use Twin\Messenger\Client\WhatsappClient;
-use Twin\Messenger\Message\AudioMessage;
-use Twin\Messenger\Message\FileMessage;
-use Twin\Messenger\Message\ImageMessage;
-use Twin\Messenger\Message\Message;
-use Twin\Messenger\Message\TextMessage;
-use Twin\Messenger\Message\VideoMessage;
+use Twin\Messenger\UserMessage\AudioMessage;
+use Twin\Messenger\UserMessage\FileMessage;
+use Twin\Messenger\UserMessage\ImageMessage;
+use Twin\Messenger\UserMessage\TextMessage;
+use Twin\Messenger\UserMessage\UserMessage;
+use Twin\Messenger\UserMessage\VideoMessage;
 use UnexpectedValueException;
 
 abstract class Messenger
@@ -37,14 +38,14 @@ abstract class Messenger
         $this->client = $client;
     }
 
-    abstract public function parseIncomingMessage(array $input);
-
     public function authenticate(Credentials $credentials): void
     {
         $this->client->auth($credentials);
     }
 
-    final public function sendMessage(string $userId, Message $message)
+    abstract public function receiveMessage(array $input): BotMessage;
+
+    final public function sendMessage(string $userId, UserMessage $message)
     {
         if ($message instanceof TextMessage) {
             return $this->sendTextMessage($userId, $message);

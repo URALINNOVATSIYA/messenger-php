@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace Twin\Messenger;
 
-use Exception;
+use RuntimeException;
 use Twin\Messenger\Auth\Credentials;
+use Twin\Messenger\BotMessage\BotMessage;
 use Twin\Messenger\Client\ViberClient;
-use Twin\Messenger\Message\AudioMessage;
-use Twin\Messenger\Message\Entity\ActionType;
-use Twin\Messenger\Message\Entity\Button;
-use Twin\Messenger\Message\Entity\Keyboard;
-use Twin\Messenger\Message\Entity\Sender;
-use Twin\Messenger\Message\FileMessage;
-use Twin\Messenger\Message\ImageMessage;
-use Twin\Messenger\Message\Message;
-use Twin\Messenger\Message\TextMessage;
-use Twin\Messenger\Message\VideoMessage;
+use Twin\Messenger\UserMessage\AudioMessage;
+use Twin\Messenger\UserMessage\Entity\ActionType;
+use Twin\Messenger\UserMessage\Entity\Button;
+use Twin\Messenger\UserMessage\Entity\Keyboard;
+use Twin\Messenger\UserMessage\Entity\Sender;
+use Twin\Messenger\UserMessage\FileMessage;
+use Twin\Messenger\UserMessage\ImageMessage;
+use Twin\Messenger\UserMessage\TextMessage;
+use Twin\Messenger\UserMessage\UserMessage;
+use Twin\Messenger\UserMessage\VideoMessage;
 
 class ViberMessenger extends Messenger
 {
@@ -25,9 +26,17 @@ class ViberMessenger extends Messenger
         parent::__construct($client);
     }
 
-    public function parseIncomingMessage(array $input)
+    public function authenticate(Credentials $credentials): void
     {
-        // TODO: Implement parseIncomingMessage() method.
+        if (!$credentials->secretToken) {
+            throw new RuntimeException('Auth token is required for Viber integration');
+        }
+        parent::authenticate($credentials);
+    }
+
+    public function receiveMessage(array $input): BotMessage
+    {
+        // TODO: Implement receiveMessage() method.
     }
 
     protected function sendTextMessage(string $userId, TextMessage $message)
@@ -44,15 +53,6 @@ class ViberMessenger extends Messenger
         }
         return $response;
     }
-
-    public function authenticate(Credentials $credentials): void
-    {
-        if (!$credentials->secretToken) {
-            throw new Exception('Auth token is required for Viber integration');
-        }
-        parent::authenticate($credentials);
-    }
-
 
     protected function sendImageMessage(string $userId, ImageMessage $message)
     {
@@ -111,7 +111,7 @@ class ViberMessenger extends Messenger
         return $this->client->sendMessage($params);
     }
 
-    private function addGeneralParameters(array &$params, Message $message): void
+    private function addGeneralParameters(array &$params, UserMessage $message): void
     {
         if ($message->trackingData !== null) {
             $params['tracking_data'] = $message->trackingData;

@@ -2,14 +2,15 @@
 
 namespace Twin\Messenger;
 
-use Exception;
+use RuntimeException;
 use Twin\Messenger\Auth\Credentials;
+use Twin\Messenger\BotMessage\BotMessage;
 use Twin\Messenger\Client\Client;
-use Twin\Messenger\Message\AudioMessage;
-use Twin\Messenger\Message\FileMessage;
-use Twin\Messenger\Message\ImageMessage;
-use Twin\Messenger\Message\TextMessage;
-use Twin\Messenger\Message\VideoMessage;
+use Twin\Messenger\UserMessage\AudioMessage;
+use Twin\Messenger\UserMessage\FileMessage;
+use Twin\Messenger\UserMessage\ImageMessage;
+use Twin\Messenger\UserMessage\TextMessage;
+use Twin\Messenger\UserMessage\VideoMessage;
 
 class WhatsappMessenger extends Messenger
 {
@@ -18,17 +19,17 @@ class WhatsappMessenger extends Messenger
         parent::__construct($client);
     }
 
-    public function parseIncomingMessage(array $input)
-    {
-        // TODO: Implement parseIncomingMessage() method.
-    }
-
     public function authenticate(Credentials $credentials): void
     {
         if (!$credentials->secretToken || !$credentials->accountId) {
-            throw new Exception('Auth token and account ID are required for Whatsapp integration');
+            throw new RuntimeException('Auth token and account ID are required for Whatsapp integration');
         }
         parent::authenticate($credentials);
+    }
+
+    public function receiveMessage(array $input): BotMessage
+    {
+        // TODO: Implement receiveMessage() method.
     }
 
     protected function sendTextMessage(string $userId, TextMessage $message)

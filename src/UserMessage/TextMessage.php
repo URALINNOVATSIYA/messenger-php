@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Twin\Messenger\Message;
+namespace Twin\Messenger\UserMessage;
 
-class TextMessage extends Message
+class TextMessage extends UserMessage
 {
     public string $body = '';
 

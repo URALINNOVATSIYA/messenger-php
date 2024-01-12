@@ -4,16 +4,17 @@ namespace Twin\Messenger;
 
 use RuntimeException;
 use Twin\Messenger\Auth\Credentials;
+use Twin\Messenger\BotMessage\BotMessage;
 use Twin\Messenger\Client\TelegramClient;
-use Twin\Messenger\Message\AudioMessage;
-use Twin\Messenger\Message\Entity\ActionType;
-use Twin\Messenger\Message\Entity\Button;
-use Twin\Messenger\Message\Entity\Keyboard;
-use Twin\Messenger\Message\FileMessage;
-use Twin\Messenger\Message\ImageMessage;
-use Twin\Messenger\Message\Message;
-use Twin\Messenger\Message\TextMessage;
-use Twin\Messenger\Message\VideoMessage;
+use Twin\Messenger\UserMessage\AudioMessage;
+use Twin\Messenger\UserMessage\Entity\ActionType;
+use Twin\Messenger\UserMessage\Entity\Button;
+use Twin\Messenger\UserMessage\Entity\Keyboard;
+use Twin\Messenger\UserMessage\FileMessage;
+use Twin\Messenger\UserMessage\ImageMessage;
+use Twin\Messenger\UserMessage\TextMessage;
+use Twin\Messenger\UserMessage\UserMessage;
+use Twin\Messenger\UserMessage\VideoMessage;
 
 class TelegramMessenger extends Messenger
 {
@@ -22,17 +23,17 @@ class TelegramMessenger extends Messenger
         parent::__construct($client);
     }
 
-    public function parseIncomingMessage(array $input)
-    {
-        // TODO: Implement parseIncomingMessage() method.
-    }
-
     public function authenticate(Credentials $credentials): void
     {
         if (!$credentials->secretToken) {
             throw new RuntimeException('Bot token is required for Telegram integration');
         }
         parent::authenticate($credentials);
+    }
+
+    public function receiveMessage(array $input): BotMessage
+    {
+        // TODO: Implement receiveMessage() method.
     }
 
     protected function sendTextMessage(string $userId, TextMessage $message)
@@ -133,7 +134,7 @@ class TelegramMessenger extends Messenger
         return $this->client->sendMessage($params);
     }
 
-    private function addGeneralParameters(array &$params, Message $message): void
+    private function addGeneralParameters(array &$params, UserMessage $message): void
     {
         if ($message->replyToMessageId) {
             $params['reply_to_message_id'] = $message->replyToMessageId;
@@ -186,16 +187,18 @@ class TelegramMessenger extends Messenger
         switch ($button->actionType) {
             case ActionType::OPEN_URL:
                 $params['url'] = $button->actionValue;
-                break;
+                return $params;
             case ActionType::CALLBACK:
                 $params['callback_data'] = $button->actionValue;
-                break;
+                return $params;
             case ActionType::OPEN_APP:
                 $params['web_app'] = ['url' => $button->actionValue];
-                break;
+                return $params;
             case ActionType::REQUEST_CONTACT:
                 $params['request_contact'] = true;
+                return $params;
+            default:
+                return $params;
         }
-        return $params;
     }
 }

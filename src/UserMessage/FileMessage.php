@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Twin\Messenger\Message;
+namespace Twin\Messenger\UserMessage;
 
-class FileMessage extends Message
+class FileMessage extends UserMessage
 {
     public string $url = '';
     public string $originalName = '';

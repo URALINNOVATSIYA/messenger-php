@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Twin\Messenger\Message;
+namespace Twin\Messenger\UserMessage;
 
-use Twin\Messenger\Message\Entity\Keyboard;
-use Twin\Messenger\Message\Entity\Sender;
+use Twin\Messenger\UserMessage\Entity\Keyboard;
+use Twin\Messenger\UserMessage\Entity\Sender;
 
-abstract class Message
+abstract class UserMessage
 {
     public string $id = '';
     public ?string $replyToMessageId = null;
