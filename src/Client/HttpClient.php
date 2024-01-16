@@ -176,4 +176,9 @@ abstract class HttpClient implements Client
     }
 
     abstract protected function apiRequest(string $method, string $url, array $params = []): Response;
+
+    public function getUserInfo(string $userId): array
+    {
+        return [];
+    }
 }

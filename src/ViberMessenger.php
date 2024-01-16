@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Twin\Messenger;
 
+use DateTimeImmutable;
 use RuntimeException;
 use Twin\Messenger\Auth\Credentials;
 use Twin\Messenger\BotMessage\AudioMessage;
@@ -17,6 +18,8 @@ use Twin\Messenger\BotMessage\ImageMessage;
 use Twin\Messenger\BotMessage\TextMessage;
 use Twin\Messenger\BotMessage\VideoMessage;
 use Twin\Messenger\Client\ViberClient;
+use Twin\Messenger\UserMessage\Content;
+use Twin\Messenger\UserMessage\User;
 use Twin\Messenger\UserMessage\UserMessage;
 
 class ViberMessenger extends Messenger
@@ -36,7 +39,24 @@ class ViberMessenger extends Messenger
 
     public function receiveMessage(array $input): UserMessage
     {
-        // TODO: Implement receiveMessage() method.
+        if ($input['event'] !== 'message' || $input['message']['type'] !== 'text') {
+            exit();
+        }
+
+        $user = new User(
+            id: $input['sender']['id'],
+            firstName: $input['sender']['name']
+        );
+        $content = new Content(
+            body: $input['message']['text']
+        );
+
+        return new UserMessage(
+            id: $input['message_token'],
+            user: $user,
+            content: $content,
+            createdAt: DateTimeImmutable::createFromFormat('U', $input['timestamp']),
+        );
     }
 
     protected function sendTextMessage(string $userId, TextMessage $message)

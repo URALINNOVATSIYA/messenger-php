@@ -52,4 +52,14 @@ class VKontakteClient extends HttpClient
 
         return $response;
     }
+
+    public function getUserInfo(string $userId): array
+    {
+        $response = $this->apiRequest('GET', '/users.get', [
+            'user_ids' => [$userId],
+            'fields' => ['first_name', 'last_name', 'contacts'],
+        ]);
+
+        return $response->success() ? $response->body : [];
+    }
 }

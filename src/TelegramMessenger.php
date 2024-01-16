@@ -2,6 +2,7 @@
 
 namespace Twin\Messenger;
 
+use DateTimeImmutable;
 use RuntimeException;
 use Twin\Messenger\Auth\Credentials;
 use Twin\Messenger\BotMessage\AudioMessage;
@@ -14,6 +15,8 @@ use Twin\Messenger\BotMessage\ImageMessage;
 use Twin\Messenger\BotMessage\TextMessage;
 use Twin\Messenger\BotMessage\VideoMessage;
 use Twin\Messenger\Client\TelegramClient;
+use Twin\Messenger\UserMessage\Content;
+use Twin\Messenger\UserMessage\User;
 use Twin\Messenger\UserMessage\UserMessage;
 
 class TelegramMessenger extends Messenger
@@ -33,7 +36,28 @@ class TelegramMessenger extends Messenger
 
     public function receiveMessage(array $input): UserMessage
     {
-        // TODO: Implement receiveMessage() method.
+        if (!$message = $input['message']) {
+            exit();
+        }
+
+        $user = new User(
+            id: $message['from']['id'],
+            firstName: $message['from']['first_name'],
+            lastName: $message['from']['last_name'] ?? null,
+        );
+
+        $content = new Content(
+            body: $message['text'],
+        );
+
+        return new UserMessage(
+            id: $message['message_id'],
+            user: $user,
+            content: $content,
+            createdAt: DateTimeImmutable::createFromFormat('U', $message['date']),
+            chatId: $message['chat']['id'],
+            replyToMessageId: $message['reply_to_message']['message_id'] ?? null,
+        );
     }
 
     protected function sendTextMessage(string $userId, TextMessage $message)

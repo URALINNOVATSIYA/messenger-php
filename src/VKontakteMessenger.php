@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Twin\Messenger;
 
+use DateTimeImmutable;
 use RuntimeException;
 use Twin\Messenger\Auth\Credentials;
 use Twin\Messenger\BotMessage\AudioMessage;
@@ -16,6 +17,8 @@ use Twin\Messenger\BotMessage\ImageMessage;
 use Twin\Messenger\BotMessage\TextMessage;
 use Twin\Messenger\BotMessage\VideoMessage;
 use Twin\Messenger\Client\VKontakteClient;
+use Twin\Messenger\UserMessage\Content;
+use Twin\Messenger\UserMessage\User;
 use Twin\Messenger\UserMessage\UserMessage;
 
 class VKontakteMessenger extends Messenger
@@ -35,7 +38,29 @@ class VKontakteMessenger extends Messenger
 
     public function receiveMessage(array $input): UserMessage
     {
-        // TODO: Implement receiveMessage() method.
+        if (!isset($input['type']) || $input['type'] !== 'message_new') {
+            exit();
+        }
+
+        $message = $input['object']['message'];
+        $userInfo = $this->client->getUserInfo($message['from_id']);
+        $user = new User(
+            id: $message['from_id'],
+            firstName: $userInfo['first_name'] ?? null,
+            lastName: $userInfo['last_name'] ?? null,
+            phone: $userInfo['contacts']['mobile_phone'] ?? null,
+        );
+        $content = new Content(
+            body: $message['text'],
+        );
+
+        return new UserMessage(
+            id: $message['id'],
+            user: $user,
+            content: $content,
+            createdAt: DateTimeImmutable::createFromFormat('U', $message['date']),
+            replyToMessageId: $message['reply_message']['id'] ?? null,
+        );
     }
 
     protected function sendTextMessage(string $userId, TextMessage $message)

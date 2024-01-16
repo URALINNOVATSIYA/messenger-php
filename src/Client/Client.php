@@ -11,4 +11,6 @@ interface Client
     public function sendMessage(array $params): Response;
 
     public function auth(Credentials $credentials): void;
+
+    public function getUserInfo(string $userId): array;
 }
